@@ -1,0 +1,28 @@
+services:
+  titifile:
+    container_name: titipfile
+    build:
+      dockerfile: Dockerfile
+      args:
+        ENV_VARIABLE: ${ENV_VARIABLE}
+        NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    env_file:
+      - .env.local
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - titipfile-data:/app/public
+    networks:
+      - titipfile
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  titipfile:
+    name: titipfile
+    external: true
+
+# Define volume to be used for docker
+volumes:
+  titipfile-data:

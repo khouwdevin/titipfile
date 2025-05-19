@@ -147,7 +147,7 @@ export function DropFile({ toastTextSuccess, toastTextFailed }: IDropFile) {
         title: toastTextSuccess ?? 'Upload success!',
         type: 'success',
       })
-    } catch (e) {
+    } catch {
       setCurrentUrl('')
       setProgress(0)
 

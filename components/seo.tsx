@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 const defaultMeta = {
   title: 'titipfile',
-  description: 'Tempat untuk menitipkan file selama 1 x 24 jam.',
+  description: 'Tempat untuk menitipkan file dengan mudah.',
   icon: 'https://titipfile.com/favicon.ico',
   url: 'https://titipfile.com/',
   siteName: 'Titip File',
