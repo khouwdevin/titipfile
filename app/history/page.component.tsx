@@ -45,19 +45,29 @@ const HistoryCard = ({
   const deleteFile = async () => {
     setIsLoading(true)
 
-    await fetch('/api/uploadthing', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'DELETE',
-      body: JSON.stringify({
-        key: history.key,
-      }),
-    })
+    try {
+      const res = await fetch('/api/file', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Basic ${process.env.API_KEY}`,
+        },
+        body: JSON.stringify({
+          key: history.key,
+        }),
+      })
 
-    await getUserHistory()
+      if (res.status === 200) {
+        await getUserHistory()
 
-    toaster.create({ title: 'Delete success!', type: 'success' })
+        toaster.create({ title: 'Delete success!', type: 'success' })
+      } else {
+        toaster.create({ title: 'Delete failed!', type: 'error' })
+      }
+    } catch (e) {
+      console.log(e)
+      toaster.create({ title: 'Delete failed!', type: 'error' })
+    }
 
     setIsLoading(false)
   }

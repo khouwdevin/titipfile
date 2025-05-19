@@ -15,31 +15,31 @@ export function useGetHistory() {
   const getUserHistory = async () => {
     setHistory(null)
     const listHistory: IHistory[] = []
-    const res = await fetch('https://api.uploadthing.com/v6/listFiles', {
-      method: 'POST',
+    const res = await fetch('/api/history', {
+      method: 'GET',
       headers: {
-        'X-Uploadthing-Api-Key': process.env.UPLOADTHING_SECRET as string,
+        authorization: `Basic ${process.env.API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({}),
     })
 
     if (res.status === 200) {
-      const { files } = await res.json()
+      const { data } = await res.json()
+      const { history } = data
 
-      for (const file of files) {
-        const resHeaders = await fetch(
-          `${process.env.UPLOADTHING_URL}/${file.key}`,
-          {
-            method: 'HEAD',
-          }
-        )
+      for (const file of history) {
+        const resHeaders = await fetch(`/api/file-info/${file.key}`, {
+          method: 'HEAD',
+          headers: {
+            authorization: `Basic ${process.env.API_KEY}`,
+          },
+        })
         const type =
           resHeaders.headers.get('Content-Type')?.split('/')[0] ?? 'file'
         listHistory.push({
           key: file.key,
           name: file.name,
-          time: new Date(file.uploadedAt),
+          time: new Date(file.uploadAt),
           type,
         })
       }

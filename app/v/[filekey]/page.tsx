@@ -2,24 +2,33 @@ import seo from '@/components/seo'
 import FileKeyComponent from './page.component'
 import { notFound } from 'next/navigation'
 import { FILE_TYPE, getFileType } from '@/utilities/file.function'
+import { join } from 'path'
+import { readdir } from 'fs/promises'
+import mime from 'mime'
 
 const getMetadata = async (
   fileKey: string
 ): Promise<{ url: string; name: string; type: FILE_TYPE; status: number }> => {
-  const res = await fetch(`${process.env.UPLOADTHING_URL}/${fileKey}`, {
-    method: 'HEAD',
-  })
-  const headers = res.headers
-  const type = headers.get('content-type') ?? ''
-  const name = headers.get('content-disposition')?.split('"')[1] ?? ''
+  const dirPath = join(process.cwd(), 'public', 'data', fileKey)
+  const files = await readdir(dirPath)
 
-  const status = res.status
+  if (files.length > 0) {
+    const filePath = join(dirPath, files[0])
+    const type = mime.getType(filePath)
+
+    return {
+      url: `/data/${fileKey}/${files[0]}`,
+      type: getFileType(type ?? 'text/plain'),
+      name: files[0],
+      status: 200,
+    }
+  }
 
   return {
-    url: `${process.env.UPLOADTHING_URL}/${fileKey}`,
-    type: getFileType(type),
-    name,
-    status,
+    url: '',
+    type: FILE_TYPE.OTHER,
+    name: '',
+    status: 400,
   }
 }
 

@@ -13,8 +13,14 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
   const key = searchParams.get('key') ?? ''
 
-  const res = await fetch(`${process.env.UPLOADTHING_URL}/${key}`)
   const origin = req.nextUrl.origin
+
+  const res = await fetch(`${origin}/${key}`, {
+    method: 'GET',
+    headers: {
+      authorization: `Basic ${process.env.API_KEY}`,
+    },
+  })
 
   if (key.length <= 0) {
     return new ImageResponse(<OgImage origin={origin} />, {
@@ -26,8 +32,7 @@ export async function GET(req: NextRequest) {
   if (res.status === 200) {
     const headers = res.headers
     const type = headers.get('content-type') ?? ''
-    const name =
-      headers.get('content-disposition')?.split('"')[1].split('.')[0] ?? ''
+    const name = headers.get('content-disposition') ?? ''
 
     return new ImageResponse(
       <OgImage origin={origin} name={name} type={type} />,

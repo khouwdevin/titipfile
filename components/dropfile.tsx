@@ -1,4 +1,3 @@
-import { OurFileRouter } from '@/app/api/uploadthing/core'
 import {
   Box,
   Center,
@@ -11,7 +10,6 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react'
-import { genUploader, UploadAbortedError } from 'uploadthing/client'
 import { ChangeEvent, DragEvent, useRef, useState } from 'react'
 import { AiOutlineCloudUpload } from 'react-icons/ai'
 import { toaster } from './ui/toaster'
@@ -29,14 +27,9 @@ interface IDropFile {
   toastTextSuccess?: string
   toastTextFailed?: string
   singleFile?: boolean
-  path: keyof OurFileRouter
 }
 
-export function DropFile({
-  toastTextSuccess,
-  toastTextFailed,
-  path,
-}: IDropFile) {
+export function DropFile({ toastTextSuccess, toastTextFailed }: IDropFile) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
@@ -46,10 +39,6 @@ export function DropFile({
   const [currentUrl, setCurrentUrl] = useState<string>('')
 
   const abortController = new AbortController()
-
-  const { uploadFiles } = genUploader<OurFileRouter>({
-    package: '@uploadthing/react',
-  })
 
   const inputRef = useRef<HTMLInputElement>(null)
   const dropRef = useRef<HTMLDivElement>(null)
@@ -88,6 +77,11 @@ export function DropFile({
       } else {
         setCurrentFile(null)
         setCurrentUrl('')
+
+        toaster.create({
+          title: 'File type is not supported!',
+          type: 'error',
+        })
       }
 
       setIsLoading(false)
@@ -111,6 +105,11 @@ export function DropFile({
       } else {
         setCurrentFile(null)
         setCurrentUrl('')
+
+        toaster.create({
+          title: 'File type is not supported!',
+          type: 'error',
+        })
       }
 
       setIsLoading(false)
@@ -121,23 +120,28 @@ export function DropFile({
     try {
       setIsUploading(true)
 
-      const res = await uploadFiles(path, {
-        files: [file],
-        signal: abortController.signal,
-        onUploadProgress: ({ progress }: { progress: number }) =>
-          setProgress(progress),
+      const formdata = new FormData()
+
+      formdata.append('file', file)
+
+      const res = await fetch('/api/file', {
+        method: 'POST',
+        headers: {
+          authorization: `Basic ${process.env.API_KEY}`,
+        },
+        body: formdata,
       })
 
-      const url = res[0].url
+      const { data } = await res.json()
 
-      setCurrentUrl(url.split('/')[4])
+      setCurrentUrl(data.fileName)
 
       setCurrentFile(null)
 
       setProgress(0)
       setIsUploading(false)
 
-      copyToClipboard(`${window.location.origin}/v/${url.split('/')[4]}`)
+      copyToClipboard(`${window.location.origin}/v/${data.fileName}`)
 
       toaster.create({
         title: toastTextSuccess ?? 'Upload success!',
@@ -149,14 +153,10 @@ export function DropFile({
 
       setIsUploading(false)
 
-      if (e instanceof UploadAbortedError) {
-        toaster.create({ title: 'Upload is cancelled!', type: 'info' })
-      } else {
-        toaster.create({
-          title: toastTextFailed ?? 'Upload failed!',
-          type: 'error',
-        })
-      }
+      toaster.create({
+        title: toastTextFailed ?? 'Upload failed!',
+        type: 'error',
+      })
     }
   }
 
