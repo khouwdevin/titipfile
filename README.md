@@ -14,9 +14,7 @@ titipfile currently still in development but you can try it on [dev web](https:/
 
 > for self-hosted you need a few steps
 
-> titipfile is using uploadthing as storage provider, in this case you need to create uploadthing account on [uploadthing](https://uploadthing.com)
-
-1. Add .env file
+- Add .env file
 
 ```text
 // .env
@@ -24,8 +22,11 @@ titipfile currently still in development but you can try it on [dev web](https:/
 API_KEY=(key secret => generate it using crypto)
 ```
 
-2. Deploy on your own
+- Deploy on your own with docker
+
+> Run this command `docker compose up --build -d`
 
 ### Notes
 
+Copy to clipboard needs SSL to be working, you can use certbot to enable the SSL
 PRs are welcomed, if you have questions please ask away or if there's any issue please open issue.

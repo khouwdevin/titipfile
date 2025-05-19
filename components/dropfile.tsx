@@ -142,7 +142,7 @@ export function DropFile({ toastTextSuccess, toastTextFailed }: IDropFile) {
         setProgress(0)
         setIsUploading(false)
 
-        copyToClipboard(`${window.location.origin}/v/${data.fileName}`)
+        await copyToClipboard(`${window.location.origin}/v/${data.fileName}`)
 
         toaster.create({
           title: toastTextSuccess ?? 'Upload success!',
