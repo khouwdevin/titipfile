@@ -10,23 +10,29 @@
 
 titipfile currently still in development but you can try it on [dev web](https://titipfilecom.vercel.app/), or you can self-hosted the app with the instruction below.
 
-### Self-hosted
+## Self-hosted
 
 > for self-hosted you need a few steps
 
-- Add .env file
+### Add .env file
 
 ```text
 // .env
 
 API_KEY=(key secret => generate it using crypto)
+MAX_FILE_SIZE=(max file size in mb, default value is 100)
 ```
 
-- Deploy on your own with docker
+### Deploy on your own with docker
 
-> Run this command `docker compose up --build -d`
+> Run this command
 
-### Notes
+```bash
+docker compose up --build -d
+```
 
-Copy to clipboard needs SSL to be working, you can use certbot to enable the SSL
+## Notes
+
+Copy to clipboard needs SSL to be working, you can use certbot to enable the SSL.
+
 PRs are welcomed, if you have questions please ask away or if there's any issue please open issue.
