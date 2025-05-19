@@ -19,7 +19,6 @@ RUN \
   fi
 
 COPY . .
-RUN mkdir -p public/data
 
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
@@ -47,12 +46,16 @@ FROM base AS runner
 
 WORKDIR /app
 
+COPY --from=builder /app/public ./public
+
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-USER nextjs
 
-COPY --from=builder /app/public ./public
+RUN mkdir -p ./public/data
+RUN chown -R nextjs:nodejs ./public/data
+
+USER nextjs
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing

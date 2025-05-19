@@ -132,21 +132,33 @@ export function DropFile({ toastTextSuccess, toastTextFailed }: IDropFile) {
         body: formdata,
       })
 
-      const { data } = await res.json()
+      if (res.status === 200) {
+        const { data } = await res.json()
 
-      setCurrentUrl(data.fileName)
+        setCurrentUrl(data.fileName)
 
-      setCurrentFile(null)
+        setCurrentFile(null)
 
-      setProgress(0)
-      setIsUploading(false)
+        setProgress(0)
+        setIsUploading(false)
 
-      copyToClipboard(`${window.location.origin}/v/${data.fileName}`)
+        copyToClipboard(`${window.location.origin}/v/${data.fileName}`)
 
-      toaster.create({
-        title: toastTextSuccess ?? 'Upload success!',
-        type: 'success',
-      })
+        toaster.create({
+          title: toastTextSuccess ?? 'Upload success!',
+          type: 'success',
+        })
+      } else {
+        setCurrentUrl('')
+        setProgress(0)
+
+        setIsUploading(false)
+
+        toaster.create({
+          title: 'Upload failed!',
+          type: 'error',
+        })
+      }
     } catch {
       setCurrentUrl('')
       setProgress(0)
@@ -154,7 +166,7 @@ export function DropFile({ toastTextSuccess, toastTextFailed }: IDropFile) {
       setIsUploading(false)
 
       toaster.create({
-        title: toastTextFailed ?? 'Upload failed!',
+        title: toastTextFailed ?? 'Server error!',
         type: 'error',
       })
     }

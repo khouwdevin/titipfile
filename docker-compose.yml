@@ -21,7 +21,6 @@ services:
 networks:
   titipfile:
     name: titipfile
-    external: true
 
 # Define volume to be used for docker
 volumes:
