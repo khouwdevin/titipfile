@@ -5,8 +5,6 @@ export async function middleware(req: NextRequest) {
     const headers = req.headers
     const path = req.nextUrl.pathname
 
-    console.log(req.nextUrl)
-
     const auth = headers.get('authorization')
     const token = auth?.split(' ')[1]
 

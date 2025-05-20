@@ -27,7 +27,8 @@ export async function POST(request: NextRequest) {
         fileName: id,
       },
     })
-  } catch {
+  } catch (e) {
+    console.log(e)
     return NextResponse.json({ message: 'Failed to save file' })
   }
 }

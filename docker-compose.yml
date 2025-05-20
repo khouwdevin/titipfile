@@ -12,7 +12,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - titipfile-data:/app/public
+      - titipfile-data:/app/data
     networks:
       - titipfile
 

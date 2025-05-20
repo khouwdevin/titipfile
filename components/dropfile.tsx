@@ -18,7 +18,11 @@ import { MdFileUpload, MdOutlineContentCopy } from 'react-icons/md'
 import { CiFileOn } from 'react-icons/ci'
 import { Tooltip } from './ui/tooltip'
 import { IoMdClose } from 'react-icons/io'
-import { checkFileSize, checkFileType } from '@/utilities/file.function'
+import {
+  checkFileSize,
+  checkFileType,
+  fetchProgress,
+} from '@/utilities/file.function'
 import { copyToClipboard } from '@/utilities/general.function'
 import { Button } from './ui/button'
 
@@ -124,17 +128,25 @@ export function DropFile({ toastTextSuccess, toastTextFailed }: IDropFile) {
 
       formdata.append('file', file)
 
-      const res = await fetch('/api/file', {
-        method: 'POST',
-        headers: {
-          authorization: `Basic ${process.env.API_KEY}`,
-        },
-        body: formdata,
+      await fetch('', {
+        headers: {},
       })
 
-      if (res.status === 200) {
-        const { data } = await res.json()
+      const res = await fetchProgress(
+        '/api/file',
+        {
+          method: 'POST',
+          headers: {
+            authorization: `Basic ${process.env.API_KEY}`,
+          },
+          body: formdata,
+        },
+        (progress) => setProgress(progress)
+      )
 
+      if (res.status === 200) {
+        console.log(res.json)
+        const { data } = res.json
         setCurrentUrl(data.fileName)
 
         setCurrentFile(null)
@@ -159,7 +171,8 @@ export function DropFile({ toastTextSuccess, toastTextFailed }: IDropFile) {
           type: 'error',
         })
       }
-    } catch {
+    } catch (e) {
+      console.log(e)
       setCurrentUrl('')
       setProgress(0)
 

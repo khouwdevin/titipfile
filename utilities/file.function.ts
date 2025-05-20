@@ -8,6 +8,52 @@ export enum FILE_TYPE {
   OTHER,
 }
 
+interface IOptions {
+  method?: string
+  headers?: Record<string, string>
+  body?: Document | XMLHttpRequestBodyInit | null
+}
+
+interface IResponse {
+  json: any
+  status: number
+}
+
+export const fetchProgress = async (
+  url: string,
+  init: IOptions,
+  progress: (progress: number) => void
+): Promise<IResponse> => {
+  const xhr = new XMLHttpRequest()
+  const success = await new Promise<IResponse>((resolve) => {
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable) {
+        progress((event.loaded / event.total) * 100)
+      }
+    })
+
+    xhr.addEventListener('loadend', () => {
+      const json = JSON.parse(xhr.response)
+      resolve({
+        json,
+        status: xhr.status,
+      })
+    })
+
+    xhr.open(init.method ?? 'GET', url, true)
+
+    if (init.headers) {
+      for (const key of Object.keys(init.headers)) {
+        xhr.setRequestHeader(key, init.headers[key])
+      }
+    }
+
+    xhr.send(init.body)
+  })
+
+  return success
+}
+
 export const getFileType = (type: string): FILE_TYPE => {
   if (type.includes('audio')) {
     return FILE_TYPE.AUDIO
