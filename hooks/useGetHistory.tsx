@@ -28,7 +28,7 @@ export function useGetHistory() {
       const { history } = data
 
       for (const file of history) {
-        const resHeaders = await fetch(`/api/file-info/${file.key}`, {
+        const resHeaders = await fetch(`/api/file/${file.key}`, {
           method: 'HEAD',
           headers: {
             authorization: `Basic ${process.env.API_KEY}`,

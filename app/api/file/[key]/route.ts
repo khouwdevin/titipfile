@@ -9,7 +9,7 @@ export async function GET(
 ) {
   const key = (await params).key
 
-  const dirPath = join(process.cwd(), 'public', 'data', key)
+  const dirPath = join(process.cwd(), 'data', key)
   const files = await readdir(dirPath)
 
   if (files.length > 0) {

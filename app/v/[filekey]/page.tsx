@@ -9,7 +9,7 @@ import mime from 'mime'
 const getMetadata = async (
   fileKey: string
 ): Promise<{ url: string; name: string; type: FILE_TYPE; status: number }> => {
-  const dirPath = join(process.cwd(), 'public', 'data', fileKey)
+  const dirPath = join(process.cwd(), 'data', fileKey)
   const files = await readdir(dirPath)
 
   if (files.length > 0) {
@@ -17,7 +17,7 @@ const getMetadata = async (
     const type = mime.getType(filePath)
 
     return {
-      url: `/data/${fileKey}/${files[0]}`,
+      url: `/api/file/${fileKey}`,
       type: getFileType(type ?? 'text/plain'),
       name: files[0],
       status: 200,

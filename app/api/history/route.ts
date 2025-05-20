@@ -7,7 +7,7 @@ import mime from 'mime'
 export async function GET() {
   try {
     const histories = []
-    const dataPath = join(process.cwd(), 'public', 'data')
+    const dataPath = join(process.cwd(), 'data')
     const dirs = await readdir(dataPath)
 
     for (const dir of dirs) {

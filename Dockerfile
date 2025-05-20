@@ -20,6 +20,8 @@ RUN \
 
 COPY . .
 
+RUN mkdir -p ./data
+
 # Environment variables must be present at build time
 # https://github.com/vercel/next.js/discussions/14030
 ARG ENV_VARIABLE
@@ -46,19 +48,19 @@ FROM base AS runner
 
 WORKDIR /app
 
+COPY --from=builder /app/public ./public
+
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 USER nextjs
 
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-RUN mkdir -p ./public/data
-
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/data ./data
 
 # Environment variables must be redefined at run time
 ARG ENV_VARIABLE

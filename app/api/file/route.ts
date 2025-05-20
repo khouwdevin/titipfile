@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
   const buffer = Buffer.from(bytes)
 
   const id = crypto.randomUUID()
-  const uploadDir = join(process.cwd(), 'public', 'data', id)
+  const uploadDir = join(process.cwd(), 'data', id)
   const filePath = join(uploadDir, file.name)
 
   try {
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const { key } = await req.json()
-    await rm(join(process.cwd(), 'public', 'data', key), {
+    await rm(join(process.cwd(), 'data', key), {
       recursive: true,
       force: true,
     })
